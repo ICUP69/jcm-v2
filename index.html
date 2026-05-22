@@ -455,29 +455,49 @@ footer{background:var(--black);padding:3.5rem 5rem;display:flex;justify-content:
         <a href="#">TikTok</a>
       </div>
     </div>
-    <form class="cform" onsubmit="return false;">
+        <form class="cform" id="contact-form" action="https://formspree.io/f/mlgvbkjg" method="POST">
+      <input type="hidden" name="_subject" value="New Inquiry — JCruzz Media"/>
       <div class="frow">
-        <div class="fg"><label class="flbl">First Name</label><input class="fin" type="text" placeholder="Your name"/></div>
-        <div class="fg"><label class="flbl">Last Name</label><input class="fin" type="text" placeholder="Last name"/></div>
+        <div class="fg"><label class="flbl">First Name</label><input class="fin" type="text" name="first_name" placeholder="Your name" required/></div>
+        <div class="fg"><label class="flbl">Last Name</label><input class="fin" type="text" name="last_name" placeholder="Last name" required/></div>
       </div>
-      <div class="fg"><label class="flbl">Email</label><input class="fin" type="email" placeholder="your@email.com"/></div>
-      <div class="fg"><label class="flbl">Phone</label><input class="fin" type="tel" placeholder="(000) 000-0000"/></div>
+      <div class="fg"><label class="flbl">Email</label><input class="fin" type="email" name="email" placeholder="your@email.com" required/></div>
+      <div class="fg"><label class="flbl">Phone</label><input class="fin" type="tel" name="phone" placeholder="(000) 000-0000"/></div>
       <div class="fg">
         <label class="flbl">Service</label>
-        <select class="fsel">
+        <select class="fsel" name="service" required>
           <option value="" disabled selected>Select a service...</option>
           <option>Wedding Photography</option>
-          <option>Wedding Photo & Video</option>
+          <option>Wedding Photo &amp; Video</option>
           <option>Portraits</option>
           <option>Real Estate Photography</option>
           <option>Real Estate Videography</option>
           <option>Branded Content</option>
         </select>
       </div>
-      <div class="fg"><label class="flbl">Event Date</label><input class="fin" type="date"/></div>
-      <div class="fg"><label class="flbl">Tell me about your vision</label><textarea class="ftxt" placeholder="Share details about your event, style, and what matters most..."></textarea></div>
-      <button class="fsub">Send Inquiry</button>
+      <div class="fg"><label class="flbl">Event Date</label><input class="fin" type="date" name="event_date"/></div>
+      <div class="fg"><label class="flbl">Tell me about your vision</label><textarea class="ftxt" name="message" placeholder="Share details about your event, style, and what matters most..."></textarea></div>
+      <div id="form-success" style="display:none;font-size:0.75rem;letter-spacing:0.15em;color:#4A4A4A;padding:1rem 0;">&#10003; Message sent — I'll be in touch soon.</div>
+      <button class="fsub" type="submit">Send Inquiry</button>
     </form>
+    <script>
+      const cform = document.getElementById('contact-form');
+      cform.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = cform.querySelector('.fsub');
+        btn.textContent = 'Sending...';
+        btn.disabled = true;
+        const res = await fetch(cform.action, { method: 'POST', body: new FormData(cform), headers: { 'Accept': 'application/json' } });
+        if (res.ok) {
+          cform.reset();
+          document.getElementById('form-success').style.display = 'block';
+          btn.textContent = 'Sent!';
+        } else {
+          btn.textContent = 'Error — try again';
+          btn.disabled = false;
+        }
+      });
+    </script>
   </div>
 </section>
 
