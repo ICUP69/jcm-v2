@@ -104,9 +104,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content
 .film-card{position:relative;cursor:pointer;}
 .film-card-inner{position:relative;width:100%;aspect-ratio:16/9;background:var(--black);overflow:hidden;}
 .film-card-inner iframe{width:100%;height:100%;border:none;display:block;pointer-events:none;}
-.film-card-inner iframe.active{pointer-events:auto;}
-.film-card-overlay{position:absolute;inset:0;background:rgba(20,20,20,0.25);display:flex;align-items:center;justify-content:center;transition:background 0.3s;cursor:pointer;}
-.film-card-overlay.hidden{display:none;}
+.film-card-overlay{position:absolute;inset:0;background:rgba(20,20,20,0.25);display:flex;align-items:center;justify-content:center;transition:background 0.3s;}
 .film-card:hover .film-card-overlay{background:rgba(20,20,20,0);}
 .play-btn{width:48px;height:48px;border:1px solid rgba(255,255,255,0.7);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all 0.3s;}
 .play-btn svg{margin-left:3px;}
@@ -539,23 +537,5 @@ btns.forEach(btn => {
   });
 });
 </script>
-
-  <script>
-    document.querySelectorAll('.film-card-overlay').forEach(function(overlay) {
-      overlay.addEventListener('click', function() {
-        const iframe = overlay.previousElementSibling;
-        // For YouTube: add autoplay
-        if (iframe && iframe.src.includes('youtube')) {
-          iframe.src = iframe.src + '&autoplay=1';
-        }
-        // For Vimeo: add autoplay
-        if (iframe && iframe.src.includes('vimeo')) {
-          iframe.src = iframe.src + '&autoplay=1';
-        }
-        iframe.classList.add('active');
-        overlay.classList.add('hidden');
-      });
-    });
-  </script>
 </body>
 </html>
