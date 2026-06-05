@@ -104,7 +104,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content
 .film-card{position:relative;cursor:pointer;}
 .film-card-inner{position:relative;width:100%;aspect-ratio:16/9;background:var(--black);overflow:hidden;}
 .film-card-inner iframe{width:100%;height:100%;border:none;display:block;pointer-events:none;}
-.film-card-overlay{position:absolute;inset:0;background:rgba(20,20,20,0.25);display:flex;align-items:center;justify-content:center;transition:background 0.3s;}
+.film-card-inner iframe.active{pointer-events:auto;}
+.film-card-overlay{position:absolute;inset:0;background:rgba(20,20,20,0.25);display:flex;align-items:center;justify-content:center;transition:background 0.3s;cursor:pointer;}
+.film-card-overlay.hidden{display:none;}
 .film-card:hover .film-card-overlay{background:rgba(20,20,20,0);}
 .play-btn{width:48px;height:48px;border:1px solid rgba(255,255,255,0.7);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all 0.3s;}
 .play-btn svg{margin-left:3px;}
@@ -356,7 +358,6 @@ footer{background:var(--black);padding:3.5rem 5rem;display:flex;justify-content:
     <div class="pi" data-cat="weddings"><div class="pi-ph"><img src="https://res.cloudinary.com/dgkzmysym/image/upload/v1777861303/_-165_ij20pl.jpg"/></div><div class="pi-ov"><span class="pi-lbl">Wedding</span></div></div>
     <div class="pi" data-cat="portraits"><div class="pi-ph"><img src="https://res.cloudinary.com/dgkzmysym/image/upload/v1777861531/_-65_g9fb24.jpg"/></div><div class="pi-ov"><span class="pi-lbl">Portraits</span></div></div>
     <div class="pi wide" data-cat="realestate"><div class="pi-ph"><img src="https://res.cloudinary.com/dgkzmysym/image/upload/v1777858757/_-21_websize_wphb87.jpg"/></div><div class="pi-ov"><span class="pi-lbl">Real Estate</span></div></div>
-    <div class="pi" data-cat="brands"><div class="pi-ph">Brand Photo Here</div><div class="pi-ov"><span class="pi-lbl">Branded · Reno</span></div></div>
     <div class="pi wide" data-cat="weddings"><div class="pi-ph"><img src="https://res.cloudinary.com/dgkzmysym/image/upload/v1777859450/_-272_websize_yf0ajo.jpg"/></div><div class="pi-ov"><span class="pi-lbl">Wedding</span></div></div>
 
   </div>
@@ -391,7 +392,7 @@ footer{background:var(--black);padding:3.5rem 5rem;display:flex;justify-content:
     </div>
     <div class="film-card">
       <div class="film-card-inner">
-        <iframe src="https://player.vimeo.com/video/1144731884?controls=0" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/D-Iq_pH7GHo?controls=0&rel=0&modestbranding=1" allowfullscreen></iframe>
         <div class="film-card-overlay"><div class="play-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 2L11 7L3 12V2Z" fill="white"/></svg></div></div>
       </div>
       <div class="film-card-label">
@@ -401,7 +402,7 @@ footer{background:var(--black);padding:3.5rem 5rem;display:flex;justify-content:
     </div>
     <div class="film-card">
       <div class="film-card-inner">
-        <iframe src="https://player.vimeo.com/video/1147959924?controls=0" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/E-ZrD_GlJIM?controls=0&rel=0&modestbranding=1" allowfullscreen></iframe>
         <div class="film-card-overlay"><div class="play-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 2L11 7L3 12V2Z" fill="white"/></svg></div></div>
       </div>
       <div class="film-card-label">
@@ -432,9 +433,9 @@ footer{background:var(--black);padding:3.5rem 5rem;display:flex;justify-content:
     </div>
     <div class="tc">
       <div class="t-stars">★ ★ ★ ★ ★</div>
-      <p class="t-q">"Our listings sell faster since switching to JCruzz Media. The real estate photos are stunning — professional, fast, and worth every penny."</p>
-      <p class="t-name">Derek T.</p>
-      <p class="t-svc">Real Estate · Sparks</p>
+      <p class="t-q">"Juan has top tier work! Professional, creative, and dialed in with everything from directing to his setup. If you need photos/video work, this is your guy. 5 stars all day"</p>
+      <p class="t-name">Jasson Mendoza</p>
+      <p class="t-svc">Real Estate · Tahoe</p>
     </div>
   </div>
 </section>
@@ -448,12 +449,7 @@ footer{background:var(--black);padding:3.5rem 5rem;display:flex;justify-content:
       <p>Whether you're planning a wedding, need stunning portraits, or want content that elevates your brand — reach out and let's make it happen.</p>
       <div class="cd"><div class="cd-lbl">Location</div><div class="cd-val">Reno / Sparks, Nevada</div></div>
       <div class="cd"><div class="cd-lbl">Service Area</div><div class="cd-val">Nevada · California · Nationwide</div></div>
-      <div class="cd"><div class="cd-lbl">Email</div><div class="cd-val">hello@jcruzzmedia.com</div></div>
-      <div class="socials">
-        <a href="https://instagram.com/jcruzzmedia">Instagram</a>
-        <a href="#">Facebook</a>
-        <a href="#">TikTok</a>
-      </div>
+      <div class="cd"><div class="cd-lbl">Email</div><div class="cd-val">jcruzz.media@gmail.com</div></div>
     </div>
         <form class="cform" id="contact-form" action="https://formspree.io/f/xojbdzrd" method="POST">
       <input type="hidden" name="_subject" value="New Inquiry — JCruzz Media"/>
@@ -537,5 +533,23 @@ btns.forEach(btn => {
   });
 });
 </script>
+
+  <script>
+    document.querySelectorAll('.film-card-overlay').forEach(function(overlay) {
+      overlay.addEventListener('click', function() {
+        const iframe = overlay.previousElementSibling;
+        // For YouTube: add autoplay
+        if (iframe && iframe.src.includes('youtube')) {
+          iframe.src = iframe.src + '&autoplay=1';
+        }
+        // For Vimeo: add autoplay
+        if (iframe && iframe.src.includes('vimeo')) {
+          iframe.src = iframe.src + '&autoplay=1';
+        }
+        iframe.classList.add('active');
+        overlay.classList.add('hidden');
+      });
+    });
+  </script>
 </body>
 </html>

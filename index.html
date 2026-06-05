@@ -291,12 +291,10 @@ footer{background:var(--black);padding:3.5rem 5rem;display:flex;justify-content:
       <h2>The Portfolio</h2>
     </div>
     <ul class="filters">
-      <li><button class="on" data-filter="all">All</button></li>
-      <li><button data-filter="weddings">Weddings</button></li>
+            <li><button class="on" data-filter="weddings">Weddings</button></li>
       <li><button data-filter="portraits">Portraits</button></li>
       <li><button data-filter="realestate">Real Estate</button></li>
-      <li><button data-filter="brands">Brands</button></li>
-    </ul>
+          </ul>
   </div>
   <div class="pgrid">
     <!-- REPLACE placeholders with: <img src="https://res.cloudinary.com/dgkzmysym/image/upload/v1777858757/_-21_websize_wphb87.jpg"/> -->
@@ -522,14 +520,21 @@ footer{background:var(--black);padding:3.5rem 5rem;display:flex;justify-content:
 <script>
 const btns = document.querySelectorAll('.filters button');
 const items = document.querySelectorAll('.pi');
+
+function applyFilter(filter) {
+  items.forEach(item => {
+    item.style.display = item.dataset.cat === filter ? '' : 'none';
+  });
+}
+
+// Default to weddings on load
+applyFilter('weddings');
+
 btns.forEach(btn => {
   btn.addEventListener('click', () => {
     btns.forEach(b => b.classList.remove('on'));
     btn.classList.add('on');
-    const filter = btn.dataset.filter;
-    items.forEach(item => {
-      item.style.display = (filter === 'all' || item.dataset.cat === filter) ? '' : 'none';
-    });
+    applyFilter(btn.dataset.filter);
   });
 });
 </script>
