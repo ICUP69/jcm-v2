@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JCruzz Media · Links</title>
+  <meta property="og:title" content="JCruzz Media · Links"/>
+  <meta property="og:image" content="https://file.garden/ae11PWGpjxW7ELRU/jmlogo.jpg"/>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg width='22' height='18' viewBox='0 0 22 18' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M11 2L3 14H19L11 2Z' stroke='%23141414' stroke-width='1.2' fill='none' stroke-linejoin='round'/><path d='M7 14L10 9L13 11L16 7' stroke='%23141414' stroke-width='1' fill='none' stroke-linecap='round' stroke-linejoin='round' opacity='0.4'/></svg>"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #141414;
+      --white: #F5F2EE;
+      --soft: #888;
+      --accent: #C8B89A;
+    }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Cormorant Garamond', serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background grain */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    /* Logo mark */
+    .logo-mark {
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards;
+    }
+
+    .logo-mark svg path {
+      stroke: var(--accent);
+    }
+
+    /* Name */
+    .name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      text-align: center;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.1s forwards;
+    }
+
+    .tagline {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--soft);
+      margin-top: 0.5rem;
+      margin-bottom: 3rem;
+      text-align: center;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+
+    /* Divider */
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: var(--accent);
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.25s forwards;
+    }
+
+    /* Links */
+    .links {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .link-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 1.5rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03);
+      color: var(--white);
+      text-decoration: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+    }
+
+    .link-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(200,184,154,0.06);
+      transform: translateX(-100%);
+      transition: transform 0.4s ease;
+    }
+
+    .link-btn:hover::before {
+      transform: translateX(0);
+    }
+
+    .link-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .link-btn:nth-child(1) { animation: fadeUp 0.8s ease 0.35s forwards; }
+    .link-btn:nth-child(2) { animation: fadeUp 0.8s ease 0.45s forwards; }
+    .link-btn:nth-child(3) { animation: fadeUp 0.8s ease 0.55s forwards; }
+
+    .link-label {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+    }
+
+    .link-icon {
+      width: 18px;
+      height: 18px;
+      opacity: 0.5;
+      flex-shrink: 0;
+      transition: opacity 0.3s;
+    }
+
+    .link-btn:hover .link-icon {
+      opacity: 1;
+    }
+
+    .arrow {
+      font-size: 0.6rem;
+      opacity: 0.3;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .link-btn:hover .arrow {
+      opacity: 0.8;
+      transform: translateX(4px);
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 3.5rem;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      text-align: center;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.7s forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <div class="logo-mark">
+      <svg width="44" height="36" viewBox="0 0 22 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M11 2L3 14H19L11 2Z" stroke="#C8B89A" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
+        <path d="M7 14L10 9L13 11L16 7" stroke="#C8B89A" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+      </svg>
+    </div>
+
+    <div class="name">JCruzz Media</div>
+    <div class="tagline">Reno · Tahoe · Beyond</div>
+    <div class="divider"></div>
+
+    <div class="links">
+
+      <a class="link-btn" href="https://jcruzzmedia.vercel.app" target="_blank">
+        <span class="link-label">
+          <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/>
+          </svg>
+          Website
+        </span>
+        <span class="arrow">→</span>
+      </a>
+
+      <a class="link-btn" href="https://www.instagram.com/jcruzz.media/" target="_blank">
+        <span class="link-label">
+          <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+          </svg>
+          Instagram
+        </span>
+        <span class="arrow">→</span>
+      </a>
+
+      <a class="link-btn" href="https://www.youtube.com/@jcruzzfilms" target="_blank">
+        <span class="link-label">
+          <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M22 8s-.3-2-1.2-2.8c-1.1-1.2-2.4-1.2-3-1.3C15.6 3.8 12 3.8 12 3.8s-3.6 0-5.8.1c-.6.1-1.9.1-3 1.3C2.3 6 2 8 2 8S1.7 10.3 1.7 12.6v2.1C1.7 17 2 19 2 19s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C8.8 23.2 12 23.2 12 23.2s3.6 0 5.8-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.5v-2.1C22.3 10.3 22 8 22 8z"/>
+            <polygon points="9.8,15.2 15.8,12 9.8,8.8" fill="currentColor" stroke="none"/>
+          </svg>
+          YouTube
+        </span>
+        <span class="arrow">→</span>
+      </a>
+
+    </div>
+
+    <div class="footer">© 2025 JCruzz Media · All rights reserved</div>
+
+  </div>
+</body>
+</html>
