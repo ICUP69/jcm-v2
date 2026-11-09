@@ -255,11 +255,12 @@ footer{background:var(--black);padding:3rem 5rem;display:flex;justify-content:sp
            api/review.mjs — the function pins it at verify time, so changing one alone
            rejects every submission.
 
-           TODO before going live: this is Cloudflare's DUMMY sitekey (always passes, shows
-           a "For testing only" bar). Swap in the real sitekey from the JCruzz widget in the
-           Cloudflare dashboard. Sitekeys are public by design; only the secret is private. -->
+           Sitekey of the JCruzz Media widget in Cloudflare (public by design; the matching
+           secret lives only in Vercel as TURNSTILE_SECRET_KEY). It only renders on the
+           hostnames listed on that widget, so for local testing either add localhost there
+           or temporarily swap in Cloudflare's test sitekey 1x00000000000000000000AA. -->
       <div class="cf-turnstile"
-           data-sitekey="1x00000000000000000000AA"
+           data-sitekey="0x4AAAAAAF5Qum0moOGiLrDl"
            data-action="review"
            data-theme="light"
            data-size="flexible"
