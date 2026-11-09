@@ -1,0 +1,5 @@
+# Local tooling for the review form, not part of the site. Everything not listed here
+# is deployed and publicly served, since this site has no build step or output folder.
+scripts
+.email-preview
+.env.example

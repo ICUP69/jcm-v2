@@ -1,2 +1,6 @@
 .vercel
 .env*.local
+.env
+
+# Generated email previews (node scripts/preview-email.mjs)
+.email-preview/
