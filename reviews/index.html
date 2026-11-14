@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Leave a Review · JCruzz Media</title>
+<meta name="description" content="Share your experience working with JCruzz Media."/>
+<!-- Unlisted on purpose: the link is texted to clients after delivery, nothing on the
+     site links here, and noindex keeps it out of search results. A link from the main
+     site would undo that, so don't add one without deciding to. -->
+<meta name="robots" content="noindex, follow"/>
+<link rel="canonical" href="https://www.jcruzzmedia.com/reviews"/>
+<meta property="og:title" content="Leave a Review · JCruzz Media"/>
+<meta property="og:description" content="It takes a minute, and it genuinely helps the next client decide."/>
+<meta property="og:image" content="https://file.garden/ae11PWGpjxW7ELRU/jmlogo.jpg"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg width='22' height='18' viewBox='0 0 22 18' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M11 2L3 14H19L11 2Z' stroke='%23141414' stroke-width='1.2' fill='none' stroke-linejoin='round'/><path d='M7 14L10 9L13 11L16 7' stroke='%23141414' stroke-width='1' fill='none' stroke-linecap='round' stroke-linejoin='round' opacity='0.4'/></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<!-- The form can't be submitted without JavaScript: Turnstile is a scripted challenge,
+     and a no-JS path that skipped it would just be the door bots use. -->
+<noscript><style>.review-form{display:none;}</style></noscript>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--black:#141414;--dark2:#2A2A2A;--mid:#4A4A4A;--soft:#888;--hint:#6B6B6B;--light:#DCDCDC;--bg:#F7F7F7;--white:#FFFFFF;--border:rgba(0,0,0,0.09);--error:#8C3B2E;}
+html{-webkit-text-size-adjust:100%;}
+body{background:var(--white);color:var(--black);font-family:'Jost',sans-serif;font-weight:300;overflow-x:hidden;min-height:100vh;display:flex;flex-direction:column;}
+
+/* ---- top bar: same logo lockup as the homepage nav ---- */
+.bar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.4rem 5rem;border-bottom:1px solid var(--border);background:var(--white);}
+.logo{display:flex;align-items:center;text-decoration:none;}
+.logo-word{font-weight:300;font-size:0.95rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--black);}
+.back{font-size:0.62rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--mid);text-decoration:none;border-bottom:1px solid rgba(0,0,0,0.25);padding-bottom:2px;transition:color 0.3s;white-space:nowrap;}
+.back:hover{color:var(--black);}
+
+/* ---- page ---- */
+main{flex:1 0 auto;padding:7rem 1.5rem 8rem;}
+.shell{max-width:640px;margin:0 auto;}
+.head{text-align:center;margin-bottom:4.5rem;}
+.eyebrow{display:block;font-size:0.62rem;letter-spacing:0.45em;text-transform:uppercase;color:var(--hint);margin-bottom:1.2rem;}
+.title{font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(2.2rem,6vw,3.4rem);line-height:1.12;margin-bottom:1.5rem;}
+.divider{width:40px;height:1px;background:var(--light);margin:0 auto 2rem;}
+.intro{font-size:0.95rem;color:var(--mid);line-height:1.9;max-width:480px;margin:0 auto;}
+
+/* ---- form: the homepage contact form's underline inputs, darkened to 3:1 so the
+   field edges are visible (WCAG 1.4.11) ---- */
+.review-form{display:flex;flex-direction:column;gap:2.4rem;}
+/* display:flex beats the UA's [hidden]{display:none}, so without this the filled-in
+   form stays on screen behind the thank-you state. */
+.review-form[hidden]{display:none;}
+.field{display:flex;flex-direction:column;border:0;min-width:0;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:2.4rem;}
+.review-form label,.review-form legend{font-size:0.66rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--mid);font-weight:400;margin-bottom:0.4rem;padding:0;}
+.tag{letter-spacing:0.18em;color:var(--hint);font-weight:300;}
+.tag.req{color:var(--black);font-weight:500;}
+.review-form input[type="text"],.review-form input[type="email"],.review-form select,.review-form textarea{
+  width:100%;background:transparent;border:none;border-bottom:1px solid var(--soft);border-radius:0;
+  padding:0.75rem 0;font-family:'Jost',sans-serif;font-weight:400;
+  /* 16px exactly: iOS Safari zooms the page on focus for anything smaller. */
+  font-size:16px;line-height:1.5;color:var(--black);outline:none;-webkit-appearance:none;appearance:none;transition:border-color 0.3s;}
+.review-form select{cursor:pointer;padding-right:1.5rem;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%234A4A4A' stroke-width='1.2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0.25rem center;}
+.review-form textarea{resize:vertical;min-height:130px;}
+.review-form input:focus,.review-form select:focus,.review-form textarea:focus{border-bottom-color:var(--black);box-shadow:0 1px 0 0 var(--black);}
+.hint{font-size:0.82rem;color:var(--hint);line-height:1.6;margin-top:0.6rem;}
+
+/* ---- star rating. Radios stay in natural DOM order so keyboard and screen-reader order
+   match what's on screen; :has() fills a star when it or any later star is checked.
+   Empty stars are outlined and chosen ones solid, so the state reads by shape as well
+   as colour. Scoped under .review-form so these <label>s outrank the field-label rule. ---- */
+.rating{display:flex;width:fit-content;margin:0.4rem 0 0 -4px;}
+.review-form .star{margin:0;padding:0 4px;cursor:pointer;line-height:1;color:#767676;letter-spacing:normal;text-transform:none;}
+.review-form .star input{position:absolute;opacity:0;width:0;height:0;}
+.review-form .star-glyph{font-size:32px;transition:color 0.15s;-webkit-text-fill-color:transparent;-webkit-text-stroke:1px currentColor;}
+.review-form .star:has(input:checked),.review-form .star:has(~ .star input:checked){color:var(--black);}
+.review-form .star:has(input:checked) .star-glyph,.review-form .star:has(~ .star input:checked) .star-glyph{-webkit-text-fill-color:currentColor;}
+/* Hover preview, gated on a star being hovered rather than on the row (see the Lake &
+   Pine README for the specificity trap this avoids). */
+.review-form .rating:has(.star:hover) .star{color:#767676;}
+.review-form .rating:has(.star:hover) .star .star-glyph{-webkit-text-fill-color:transparent;}
+.review-form .rating:has(.star:hover) .star:hover,.review-form .rating:has(.star:hover) .star:has(~ .star:hover){color:var(--mid);}
+.review-form .rating:has(.star:hover) .star:hover .star-glyph,.review-form .rating:has(.star:hover) .star:has(~ .star:hover) .star-glyph{-webkit-text-fill-color:currentColor;}
+.review-form .star:has(input:focus-visible){outline:2px solid var(--black);outline-offset:3px;}
+.rating-field.is-missing legend{color:var(--error);}
+.rating-field.is-missing .star{color:var(--error);}
+
+/* ---- validation ---- */
+.field-error{font-size:0.85rem;line-height:1.5;color:var(--error);margin-top:0.7rem;}
+.field-error:empty{display:none;}
+.review-form .field.is-invalid label{color:var(--error);}
+.review-form .field.is-invalid input{border-bottom-color:var(--error);}
+.review-form .field.is-invalid input:focus{box-shadow:0 1px 0 0 var(--error);}
+
+/* ---- consent: reads as a sentence, not a field name ---- */
+.review-form .consent{display:flex;align-items:flex-start;gap:0.8rem;cursor:pointer;font-size:0.92rem;letter-spacing:normal;text-transform:none;color:var(--black);font-weight:300;line-height:1.5;margin:0;}
+.review-form .consent input{width:17px;height:17px;margin:3px 0 0;accent-color:var(--black);flex-shrink:0;}
+
+/* Turnstile draws its own iframe; the reserved height stops the button jumping down
+   when the widget finishes loading. */
+.cf-turnstile{min-height:65px;}
+
+.submit{align-self:flex-start;padding:1.1rem 3rem;background:var(--black);border:none;color:var(--white);font-family:'Jost',sans-serif;font-size:0.66rem;font-weight:400;letter-spacing:0.38em;text-transform:uppercase;cursor:pointer;transition:background 0.3s,opacity 0.3s;}
+.submit:hover:not(:disabled){background:var(--dark2);}
+.submit:focus-visible{outline:2px solid var(--black);outline-offset:3px;}
+.submit:disabled{opacity:0.5;cursor:default;}
+.status{font-size:0.88rem;line-height:1.6;margin-top:-1.2rem;}
+.status:empty{display:none;}
+.status.is-pending{color:var(--mid);}
+.status.is-error{color:var(--error);}
+
+/* Off-screen rather than display:none, which the cruder bots check for. */
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+/* Read by screen readers, takes up no visual space. */
+.vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.noscript{background:var(--bg);border-left:2px solid var(--black);padding:1.2rem 1.5rem;font-size:0.95rem;line-height:1.7;color:var(--black);}
+.noscript a{color:var(--black);}
+
+/* ---- thank-you state ---- */
+.thanks{text-align:center;}
+.thanks[hidden]{display:none;}
+.thanks:focus{outline:none;}
+.thanks .intro{margin-bottom:2.8rem;}
+.btn{display:inline-block;font-size:0.62rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--white);background:var(--black);padding:1rem 2.8rem;text-decoration:none;transition:background 0.3s;}
+.btn:hover{background:var(--dark2);}
+
+/* ---- footer: the homepage footer, trimmed ---- */
+footer{background:var(--black);padding:3rem 5rem;display:flex;justify-content:space-between;align-items:center;gap:1.5rem;}
+.f-logo{display:flex;align-items:center;}
+.f-logo-word{font-weight:300;font-size:0.85rem;letter-spacing:0.35em;text-transform:uppercase;color:rgba(255,255,255,0.6);}
+.f-tag{font-family:'Playfair Display',serif;font-size:0.85rem;color:rgba(255,255,255,0.45);}
+.f-copy{font-size:0.6rem;letter-spacing:0.15em;color:rgba(255,255,255,0.55);}
+
+@media(max-width:760px){
+  .bar{padding:1.2rem 1.5rem;}
+  .bar .logo-word{font-size:0.8rem;letter-spacing:0.28em;}
+  main{padding:4.5rem 1.5rem 5.5rem;}
+  .head{margin-bottom:3.5rem;}
+  .row{grid-template-columns:1fr;}
+  footer{flex-direction:column;text-align:center;padding:2.5rem 1.5rem;gap:1rem;}
+}
+/* Turnstile never draws narrower than 300px. Below 348px the column is narrower than
+   that, so the widget alone borrows from the side gutters instead of pushing the page
+   into a sideways scroll on the smallest phones. */
+@media(max-width:348px){
+  .cf-turnstile{margin:0 -14px;}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <a class="logo" href="/" aria-label="JCruzz Media home">
+    <span class="logo-word" style="padding-right:0.55rem;">JCruzz</span>
+    <svg width="22" height="18" viewBox="0 0 22 18" fill="none" aria-hidden="true">
+      <path d="M11 2L3 14H19L11 2Z" stroke="#141414" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
+      <path d="M7 14L10 9L13 11L16 7" stroke="#141414" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"/>
+    </svg>
+    <span class="logo-word" style="padding-left:0.9rem;">Media</span>
+  </a>
+  <a class="back" href="/">← Back to site</a>
+</header>
+
+<main>
+  <div class="shell">
+
+    <div class="head">
+      <span class="eyebrow">Kind Words</span>
+      <h1 class="title">Leave a review</h1>
+      <div class="divider"></div>
+      <p class="intro">If we worked together — a wedding, a portrait session, a listing, or a brand shoot — I'd love to hear how it went. It takes a minute, and it genuinely helps the next client decide.</p>
+    </div>
+
+    <noscript>
+      <p class="noscript">
+        This form needs JavaScript switched on, to check the submission isn't automated.
+        If you'd rather not, email your review to
+        <a href="mailto:jcruzz.media@gmail.com">jcruzz.media@gmail.com</a>
+        and I'll add it by hand.
+      </p>
+    </noscript>
+
+    <form class="review-form" id="reviewForm" action="/api/review" method="post" novalidate>
+
+      <!-- Honeypot. Real people never see it; anything that fills it is discarded. -->
+      <div class="hp" aria-hidden="true">
+        <label for="website">Website</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off"/>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="name">Your name</label>
+          <input type="text" id="name" name="name" autocomplete="name"/>
+        </div>
+        <div class="field" id="emailField">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" autocomplete="email"/>
+          <p class="field-error" id="emailError" role="alert"></p>
+        </div>
+      </div>
+
+      <fieldset class="field rating-field">
+        <legend id="ratingLegend">How was your experience? <span class="tag req">required</span></legend>
+        <div class="rating" role="radiogroup" aria-labelledby="ratingLegend" aria-required="true">
+          <label class="star"><input type="radio" name="rating" value="1"/><span class="star-glyph" aria-hidden="true">★</span><span class="vh">1 star</span></label>
+          <label class="star"><input type="radio" name="rating" value="2"/><span class="star-glyph" aria-hidden="true">★</span><span class="vh">2 stars</span></label>
+          <label class="star"><input type="radio" name="rating" value="3"/><span class="star-glyph" aria-hidden="true">★</span><span class="vh">3 stars</span></label>
+          <label class="star"><input type="radio" name="rating" value="4"/><span class="star-glyph" aria-hidden="true">★</span><span class="vh">4 stars</span></label>
+          <label class="star"><input type="radio" name="rating" value="5"/><span class="star-glyph" aria-hidden="true">★</span><span class="vh">5 stars</span></label>
+        </div>
+        <!-- role="alert" announces the text the moment it's filled in; it stays empty
+             (and hidden by :empty) until then. -->
+        <p class="field-error" id="ratingError" role="alert"></p>
+      </fieldset>
+
+      <div class="field">
+        <label for="review">Your review</label>
+        <textarea id="review" name="review" rows="6"></textarea>
+        <p class="hint">A few sentences is perfect.</p>
+      </div>
+
+      <!-- Service and location together make the line under each review card on the
+           homepage ("Wedding · Lake Tahoe"), so a review arrives ready to drop in.
+           The option values must match SERVICES in api/review.mjs. -->
+      <div class="row">
+        <div class="field">
+          <label for="service">Service</label>
+          <select id="service" name="service">
+            <option value="" selected>Choose one</option>
+            <option value="Wedding">Wedding</option>
+            <option value="Portraits">Portraits</option>
+            <option value="Real Estate">Real Estate</option>
+            <option value="Branded Content">Branded Content</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="credit">Display name <span class="tag">optional</span></label>
+        <input type="text" id="credit" name="credit"/>
+        <p class="hint">How you'd like to appear on the site. I use a first name and last initial unless you tell me otherwise.</p>
+      </div>
+
+      <label class="consent">
+        <input type="checkbox" name="consent" value="yes"/>
+        <span>JCruzz Media can publish this review on its website.</span>
+      </label>
+
+      <!-- Cloudflare Turnstile. data-action must stay in step with TURNSTILE_ACTION in
+           api/review.mjs — the function pins it at verify time, so changing one alone
+           rejects every submission.
+
+           Sitekey of the JCruzz Media widget in Cloudflare (public by design; the matching
+           secret lives only in Vercel as TURNSTILE_SECRET_KEY). It only renders on the
+           hostnames listed on that widget, so for local testing either add localhost there
+           or temporarily swap in Cloudflare's test sitekey 1x00000000000000000000AA. -->
+      <div class="cf-turnstile"
+           data-sitekey="0x4AAAAAAF5Qum0moOGiLrDl"
+           data-action="review"
+           data-theme="light"
+           data-size="flexible"
+           data-refresh-expired="auto"></div>
+
+      <button type="submit" class="submit">Send Review</button>
+      <p class="status" id="formStatus" role="status" aria-live="polite"></p>
+
+    </form>
+
+    <div class="thanks" id="thanks" tabindex="-1" hidden>
+      <span class="eyebrow">Thank You</span>
+      <h2 class="title">That means a lot.</h2>
+      <div class="divider"></div>
+      <p class="intro">Your review is on its way to me. I read every one.</p>
+      <a class="btn" href="/">Back to the site</a>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="f-logo">
+    <span class="f-logo-word" style="padding-right:0.55rem;">JCruzz</span>
+    <svg width="20" height="16" viewBox="0 0 22 18" fill="none" aria-hidden="true">
+      <path d="M11 2L3 14H19L11 2Z" stroke="rgba(255,255,255,0.5)" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
+      <path d="M7 14L10 9L13 11L16 7" stroke="rgba(255,255,255,0.5)" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"/>
+    </svg>
+    <span class="f-logo-word" style="padding-left:0.9rem;">Media</span>
+  </div>
+  <div class="f-tag">Every moment, told cinematically.</div>
+  <div class="f-copy">© 2026 Jcruzz.Media LLC · Reno, NV</div>
+</footer>
+
+<script>
+  (function () {
+    const form = document.getElementById('reviewForm');
+    const statusEl = document.getElementById('formStatus');
+    const thanks = document.getElementById('thanks');
+    const submit = form.querySelector('.submit');
+    const ratingField = form.querySelector('.rating-field');
+    const ratingError = document.getElementById('ratingError');
+    const emailInput = document.getElementById('email');
+    const emailField = document.getElementById('emailField');
+    const emailError = document.getElementById('emailError');
+
+    // Optional, so an empty box is fine. But a typo'd address is worse than none at all:
+    // it becomes the email's reply_to, so the review arrives looking replyable and
+    // silently isn't. checkValidity() rather than a hand-rolled regex — the input is
+    // type="email", so the browser already holds the rule.
+    function emailProblem() {
+      return emailInput.value.trim() !== '' && !emailInput.checkValidity();
+    }
+
+    const rating = () => form.querySelector('input[name="rating"]:checked');
+
+    // Clear the warning the moment they act on it.
+    form.addEventListener('change', (e) => {
+      if (e.target.name === 'rating') {
+        ratingField.classList.remove('is-missing');
+        ratingError.textContent = '';
+      }
+    });
+
+    emailInput.addEventListener('input', () => {
+      if (!emailProblem()) {
+        emailField.classList.remove('is-invalid');
+        emailError.textContent = '';
+      }
+    });
+
+    function showThanks() {
+      // The original heading goes too, or the page shows two titles at once.
+      form.hidden = true;
+      document.querySelector('.head').hidden = true;
+      statusEl.textContent = '';
+      thanks.hidden = false;
+      thanks.focus();
+      window.scrollTo({ top: 0 });
+    }
+
+    function fail(message) {
+      submit.disabled = false;
+      statusEl.className = 'status is-error';
+      statusEl.textContent = message;
+      // Turnstile tokens are single-use, so the one just spent is dead either way.
+      // Without this reset a second attempt fails on a stale token.
+      if (window.turnstile) window.turnstile.reset();
+    }
+
+    const GENERIC_ERROR =
+      'That didn’t send. Please email jcruzz.media@gmail.com and I’ll sort it out.';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // The only required field, and the browser can't police it: the star inputs are
+      // visually hidden, so reportValidity() would fail silently on a control it can't
+      // anchor a bubble to.
+      if (!rating()) {
+        ratingField.classList.add('is-missing');
+        ratingError.textContent =
+          'Please pick a star rating — that part I do need. Everything else is up to you.';
+        statusEl.className = 'status';
+        statusEl.textContent = '';
+        ratingField.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        form.querySelector('input[name="rating"]').focus({ preventScroll: true });
+        return;
+      }
+
+      if (emailProblem()) {
+        emailField.classList.add('is-invalid');
+        emailError.textContent =
+          'That address doesn’t look quite right — check for a missing @, or leave it blank.';
+        emailInput.focus({ preventScroll: true });
+        emailInput.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        return;
+      }
+      emailField.classList.remove('is-invalid');
+      emailError.textContent = '';
+
+      // The widget usually resolves before anyone finishes typing, but it can still be
+      // working on a slow connection. Posting without a token is a guaranteed 403.
+      const token = form.querySelector('[name="cf-turnstile-response"]');
+      if (!token || !token.value) {
+        statusEl.className = 'status is-pending';
+        statusEl.textContent = 'Just a moment — still checking your browser. Try again in a second.';
+        return;
+      }
+
+      submit.disabled = true;
+      statusEl.className = 'status is-pending';
+      statusEl.textContent = 'Sending…';
+
+      let res;
+      try {
+        res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(new FormData(form)))
+        });
+      } catch (err) {
+        fail(GENERIC_ERROR);
+        return;
+      }
+
+      if (res.ok) {
+        showThanks();
+        return;
+      }
+
+      // 403 is the one a person can act on (reload and retry), so it gets the function's
+      // own wording; everything else falls back to "email me instead".
+      let message = GENERIC_ERROR;
+      if (res.status === 403 || res.status === 429) {
+        try {
+          const body = await res.json();
+          if (body && body.error) message = body.error;
+        } catch (err) { /* keep the generic message */ }
+      }
+      fail(message);
+    });
+  })();
+</script>
+
+</body>
+</html>
