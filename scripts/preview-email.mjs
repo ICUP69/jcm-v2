@@ -22,7 +22,8 @@ const CASES = {
     service: 'Wedding',
     location: 'Lake Tahoe',
     credit: 'Catherine R.',
-    consent: true
+    consent: true,
+    photos: 3
   },
   // Every optional field empty, plus characters that must be escaped rather than
   // rendered as markup inside the quote, and the no-consent badge.
@@ -66,7 +67,8 @@ const CASES = {
     service: 'Real Estate',
     location: 'Reno',
     credit: 'Jordan W.',
-    consent: true
+    consent: true,
+    photos: 1
   }
 };
 

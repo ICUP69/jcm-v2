@@ -49,7 +49,9 @@ export function renderEmail(f) {
   // Same shape as the testimonial cards on the homepage: "Wedding · Lake Tahoe".
   const detail = [f.service, f.location].filter(Boolean).join(' · ');
   const suspect = hasLink(f.review);
-  const ctx = { display, detail, suspect };
+  // A count, not the files: the files ride along as attachments, added by the caller.
+  const photos = f.photos ? `${f.photos} attached` : '';
+  const ctx = { display, detail, suspect, photos };
 
   return {
     subject: `${suspect ? '[possible spam] ' : ''}New review — ${f.name || ANON} (${f.rating}/5)`,
@@ -73,7 +75,7 @@ export function hasLink(review) {
 
 /* ---------------------------------------------------------------- plain text */
 /* Kept alongside the HTML, not replaced by it: Resend sends both and the client picks. */
-function text(f, { display, detail, suspect }) {
+function text(f, { display, detail, suspect, photos }) {
   const stars = '★'.repeat(f.rating) + '☆'.repeat(5 - f.rating);
   return [
     ...(suspect ? ['!! This review contains a link, which real ones rarely do. Read it before publishing.', ''] : []),
@@ -85,13 +87,16 @@ function text(f, { display, detail, suspect }) {
     `From:     ${fromLine(f) || '(not given)'}`,
     `Credit:   ${display}`,
     `Service:  ${detail || '(not given)'}`,
-    `Publish:  ${f.consent ? 'YES — they ticked the consent box' : 'NO — do not put this on the site'}`,
+    `Photos:   ${photos || 'none'}`,
+    `Publish:  ${f.consent
+      ? `YES — they ticked the consent box${photos ? ', which covers the photos too' : ''}`
+      : 'NO — do not put this on the site'}`,
     '—'.repeat(48)
   ].join('\n');
 }
 
 /* ---------------------------------------------------------------------- html */
-function html(f, { display, detail, suspect }) {
+function html(f, { display, detail, suspect, photos }) {
   const stars =
     `<span style="color:${C.ink};">${'★'.repeat(f.rating)}</span>` +
     `<span style="color:${C.emptyStar};">${'☆'.repeat(5 - f.rating)}</span>`;
@@ -129,10 +134,11 @@ function html(f, { display, detail, suspect }) {
 
     <tr><td style="padding:26px 32px 30px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-        ${row('From', escapeHtml(fromLine(f)) || notGiven())}
+        ${row('From', escapeHtml(fromLine(f)) || muted('not given'))}
         ${row('Credit', escapeHtml(display))}
-        ${row('Service', escapeHtml(detail) || notGiven())}
-        ${row('Publish', consentBadge(f.consent), true)}
+        ${row('Service', escapeHtml(detail) || muted('not given'))}
+        ${row('Photos', escapeHtml(photos) || muted('none'))}
+        ${row('Publish', consentBadge(f.consent, Boolean(photos)), true)}
       </table>
     </td></tr>
 
@@ -158,8 +164,8 @@ function fromLine(f) {
   return name || email;
 }
 
-function notGiven() {
-  return '<span style="opacity:0.5;">not given</span>';
+function muted(label) {
+  return `<span style="opacity:0.5;">${label}</span>`;
 }
 
 function row(label, value, last) {
@@ -169,9 +175,11 @@ function row(label, value, last) {
   </tr>`;
 }
 
-function consentBadge(consent) {
+// The form's consent box covers the review and any photos sent with it, so the badge says
+// so whenever photos came along.
+function consentBadge(consent, withPhotos) {
   return consent
-    ? `<span style="display:inline-block;background:${C.ink};color:#FFFFFF;font-family:${SANS};font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;padding:5px 11px;">Yes &mdash; OK to publish</span>`
+    ? `<span style="display:inline-block;background:${C.ink};color:#FFFFFF;font-family:${SANS};font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;padding:5px 11px;">Yes &mdash; OK to publish${withPhotos ? ' review &amp; photos' : ''}</span>`
     : `<span style="display:inline-block;border:1px solid ${C.rule};color:${C.soft};font-family:${SANS};font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;padding:5px 11px;">No &mdash; do not publish</span>`;
 }
 

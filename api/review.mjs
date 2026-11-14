@@ -22,6 +22,12 @@
  * Turnstile, the only one that spends a network round trip. Lake & Pine also rate-limits
  * in code through a Cloudflare binding; Vercel has no equivalent binding, so that job
  * belongs to a Vercel Firewall rate-limit rule on /api/review instead (dashboard, no code).
+ *
+ * Photos: the page can attach up to three of the client's favourite shots. Vercel refuses
+ * any request body over 4.5 MB before this code runs, so the page shrinks each photo in
+ * the browser first. Juan already has the originals; the copy only has to show him which
+ * shot they meant. The checks below repeat the page's limits, because the page is only a
+ * suggestion to anything that posts here directly.
  */
 
 import { renderEmail } from './_email.mjs';
@@ -31,6 +37,20 @@ const LIMITS = { name: 120, email: 200, review: 5000, location: 120, credit: 120
 // Must match the <option> values on /reviews. Anything else is dropped rather than
 // passed through, so the Service line in the email only ever reads one of these.
 const SERVICES = new Set(['Wedding', 'Portraits', 'Real Estate', 'Branded Content']);
+
+// Must match MAX_PHOTOS and MAX_PHOTO_BYTES in reviews/index.html. Three at this size is
+// 3.9 MB, which leaves room under Vercel's 4.5 MB body limit for the text fields.
+const MAX_PHOTOS = 3;
+const MAX_PHOTO_BYTES = 1_300_000;
+
+// Identified by the file's first bytes, never by its name or declared type, which the
+// sender controls. The page always sends JPEG; PNG and WebP are accepted so the rule here
+// matches the one the page tells people.
+const PHOTO_TYPES = [
+  { ext: 'jpg', matches: b => b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF },
+  { ext: 'png', matches: b => b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4E && b[3] === 0x47 },
+  { ext: 'webp', matches: b => ascii(b, 0, 4) === 'RIFF' && ascii(b, 8, 12) === 'WEBP' }
+];
 
 const DEFAULT_TO = 'jcruzz.media@gmail.com';
 // Sent from Lake & Pine's domain because it is already verified in the shared Resend
@@ -78,8 +98,9 @@ async function handleReview(request) {
   }
 
   let data;
+  let files;
   try {
-    data = await request.json();
+    ({ data, files } = await readSubmission(request));
   } catch (_) {
     return json({ error: 'Could not read that submission.' }, 400);
   }
@@ -108,6 +129,8 @@ async function handleReview(request) {
   if (!Number.isInteger(rating) || rating < 1 || rating > 5) invalid.push('rating');
   // Not required, but if they typed one it should be usable — it becomes reply_to.
   if (email && !email.includes('@')) invalid.push('email');
+  const photos = await readPhotos(files);
+  if (!photos) invalid.push('photos');
   if (invalid.length) {
     return json({ error: `Missing or invalid: ${invalid.join(', ')}` }, 400);
   }
@@ -126,7 +149,9 @@ async function handleReview(request) {
   }
 
   // Resend takes text and html together; clients pick whichever they render.
-  const mail = renderEmail({ name, email, review, rating, service, location, credit, consent });
+  const mail = renderEmail({
+    name, email, review, rating, service, location, credit, consent, photos: photos.length
+  });
 
   let res;
   try {
@@ -136,7 +161,8 @@ async function handleReview(request) {
         Authorization: `Bearer ${key}`,
         'Content-Type': 'application/json'
       },
-      signal: AbortSignal.timeout(10_000),
+      // Longer than the Turnstile call's: with photos this uploads up to ~5 MB of base64.
+      signal: AbortSignal.timeout(20_000),
       body: JSON.stringify({
         from: env.REVIEW_FROM || DEFAULT_FROM,
         to: [env.REVIEW_TO || DEFAULT_TO],
@@ -144,7 +170,14 @@ async function handleReview(request) {
         // Omitted entirely when no address was given — Resend rejects an empty reply_to,
         // which would turn "they skipped an optional field" into a failed submission.
         ...(email ? { reply_to: email } : {}),
-        ...mail
+        ...mail,
+        // Named by position, not by whatever the upload called itself.
+        ...(photos.length ? {
+          attachments: photos.map((p, i) => ({
+            filename: `photo-${i + 1}.${p.ext}`,
+            content: Buffer.from(p.bytes).toString('base64')
+          }))
+        } : {})
       })
     });
   } catch (err) {
@@ -158,6 +191,55 @@ async function handleReview(request) {
   }
 
   return json({ ok: true }, 200);
+}
+
+/**
+ * The page posts multipart form data, the only way to carry the photos without inflating
+ * them by a third as base64. JSON is still read because that's what the page sent before
+ * photos existed, so a copy someone loaded before a deploy still submits.
+ * Text fields come back as `data`, uploads under "photos" as `files`.
+ */
+async function readSubmission(request) {
+  const type = (request.headers.get('Content-Type') || '').toLowerCase();
+  if (!type.startsWith('multipart/form-data')) {
+    return { data: await request.json(), files: [] };
+  }
+
+  const form = await request.formData();
+  const data = {};
+  const files = [];
+  for (const [key, value] of form) {
+    if (key === 'photos') {
+      files.push(value);
+    } else if (typeof value === 'string' && !(key in data)) {
+      data[key] = value;
+    }
+  }
+  return { data, files };
+}
+
+/**
+ * The uploads as [{ ext, bytes }], or null if any one breaks a rule. One bad photo fails
+ * the whole submission rather than being dropped, so nobody is told it worked while part
+ * of what they sent quietly went missing. The page enforces the same rules first, so a
+ * real visitor only lands here if something has gone wrong.
+ */
+async function readPhotos(files) {
+  if (files.length > MAX_PHOTOS) return null;
+
+  const photos = [];
+  for (const file of files) {
+    if (typeof file === 'string' || file.size === 0 || file.size > MAX_PHOTO_BYTES) return null;
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const type = PHOTO_TYPES.find(t => t.matches(bytes));
+    if (!type) return null;
+    photos.push({ ext: type.ext, bytes });
+  }
+  return photos;
+}
+
+function ascii(bytes, start, end) {
+  return String.fromCharCode(...bytes.subarray(start, end));
 }
 
 /**
