@@ -91,6 +91,25 @@ main{flex:1 0 auto;padding:7rem 1.5rem 8rem;}
 .review-form .field.is-invalid input{border-bottom-color:var(--error);}
 .review-form .field.is-invalid input:focus{box-shadow:0 1px 0 0 var(--error);}
 
+/* ---- favourite photos. The file input stays in the tab order but out of sight; the
+   label around it is what people see and press. Scoped under .review-form so this label
+   outranks the field-label rule, like the stars. ---- */
+.photos{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:0.8rem;margin-top:1rem;}
+.photos:empty{display:none;}
+.photo{position:relative;aspect-ratio:1;background:var(--bg);border:1px solid var(--border);overflow:hidden;}
+.photo img{width:100%;height:100%;object-fit:cover;display:block;}
+.photo.is-loading{animation:photo-pulse 1.2s ease-in-out infinite;}
+@keyframes photo-pulse{50%{opacity:0.45;}}
+@media(prefers-reduced-motion:reduce){.photo.is-loading{animation:none;}}
+.photo-remove{position:absolute;top:6px;right:6px;width:32px;height:32px;border:none;border-radius:50%;background:rgba(20,20,20,0.78);color:var(--white);font-family:'Jost',sans-serif;font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
+.photo-remove:hover{background:var(--black);}
+.photo-remove:focus-visible{outline:2px solid var(--white);outline-offset:-4px;}
+.review-form .photo-add{position:relative;align-self:flex-start;display:inline-flex;align-items:center;gap:0.7rem;margin:1rem 0 0;padding:0.9rem 1.6rem;border:1px solid var(--soft);font-size:0.62rem;letter-spacing:0.28em;color:var(--black);cursor:pointer;transition:border-color 0.3s;}
+.review-form .photo-add:hover{border-color:var(--black);}
+.review-form .photo-add:has(input:focus-visible){outline:2px solid var(--black);outline-offset:3px;}
+.review-form .photo-add[hidden]{display:none;}
+.photo-plus{font-size:1rem;line-height:1;letter-spacing:0;}
+
 /* ---- consent: reads as a sentence, not a field name ---- */
 .review-form .consent{display:flex;align-items:flex-start;gap:0.8rem;cursor:pointer;font-size:0.92rem;letter-spacing:normal;text-transform:none;color:var(--black);font-weight:300;line-height:1.5;margin:0;}
 .review-form .consent input{width:17px;height:17px;margin:3px 0 0;accent-color:var(--black);flex-shrink:0;}
@@ -220,6 +239,21 @@ footer{background:var(--black);padding:3rem 5rem;display:flex;justify-content:sp
         <p class="hint">A few sentences is perfect.</p>
       </div>
 
+      <!-- Favourite photos. The input has no name on purpose: FormData would otherwise post
+           the full-size originals. The script shrinks each one and appends the copy
+           itself, under "photos". Limits must match MAX_PHOTOS and MAX_PHOTO_BYTES in
+           api/review.mjs. -->
+      <fieldset class="field" aria-describedby="photosHint">
+        <legend>Your favorite shots <span class="tag">optional</span></legend>
+        <p class="hint" id="photosHint" style="margin-top:0;">Up to three photos from your shoot that you loved most. JPEG, PNG or WebP.</p>
+        <ul class="photos" id="photoList" aria-label="Chosen photos"></ul>
+        <label class="photo-add" id="photoAdd">
+          <input class="vh" type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" multiple aria-describedby="photosHint photoError"/>
+          <span class="photo-plus" aria-hidden="true">+</span> Add photos
+        </label>
+        <p class="field-error" id="photoError" role="alert"></p>
+      </fieldset>
+
       <!-- Service and location together make the line under each review card on the
            homepage ("Wedding · Lake Tahoe"), so a review arrives ready to drop in.
            The option values must match SERVICES in api/review.mjs. -->
@@ -248,7 +282,7 @@ footer{background:var(--black);padding:3rem 5rem;display:flex;justify-content:sp
 
       <label class="consent">
         <input type="checkbox" name="consent" value="yes"/>
-        <span>JCruzz Media can publish this review on its website.</span>
+        <span>JCruzz Media can publish this review, and any photos I picked, on its website.</span>
       </label>
 
       <!-- Cloudflare Turnstile. data-action must stay in step with TURNSTILE_ACTION in
@@ -306,6 +340,144 @@ footer{background:var(--black);padding:3rem 5rem;display:flex;justify-content:sp
     const emailInput = document.getElementById('email');
     const emailField = document.getElementById('emailField');
     const emailError = document.getElementById('emailError');
+
+    /* ---- favourite photos -------------------------------------------------------- */
+    // Must match api/review.mjs, which refuses anything over these. Vercel refuses a whole
+    // request over 4.5 MB before the function even runs; three at this size leaves room.
+    const MAX_PHOTOS = 3;
+    const MAX_PHOTO_BYTES = 1300000;
+    // Turned away before opening: an older phone can run out of memory decoding a huge
+    // image, and nothing delivered from a shoot should come close to this.
+    const MAX_ORIGINAL_BYTES = 25 * 1024 * 1024;
+    const ACCEPTED_TYPE = /^image\/(jpeg|png|webp)$/;
+    const ACCEPTED_EXT = /\.(jpe?g|png|webp)$/i;
+    // [long edge in px, JPEG quality], tried in order until the copy fits under
+    // MAX_PHOTO_BYTES. The first nearly always does; the rest catch unusually busy shots.
+    // 2000px is plenty for Juan to recognise the shot, and he has the original anyway.
+    const ATTEMPTS = [[2000, 0.85], [2000, 0.72], [1600, 0.72], [1200, 0.7]];
+
+    const photoInput = document.getElementById('photoInput');
+    const photoAdd = document.getElementById('photoAdd');
+    const photoList = document.getElementById('photoList');
+    const photoError = document.getElementById('photoError');
+    const photos = [];  // shrunk copies, as { blob, url }
+    let preparing = 0;  // picked but still being shrunk
+
+    function isAccepted(file) {
+      // Some Android pickers report no type at all, so fall back to the extension.
+      return file.type ? ACCEPTED_TYPE.test(file.type) : ACCEPTED_EXT.test(file.name);
+    }
+
+    // Redraws the photo smaller and re-saves it as JPEG. Re-saving also drops the hidden
+    // data phones embed in photos, location included.
+    async function shrink(file) {
+      const url = URL.createObjectURL(file);
+      try {
+        const img = new Image();
+        img.src = url;
+        await img.decode();
+        for (const [edge, quality] of ATTEMPTS) {
+          const blob = await encode(img, edge, quality);
+          if (blob.size <= MAX_PHOTO_BYTES) return blob;
+        }
+        throw new Error('too-big');
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    }
+
+    function encode(img, edge, quality) {
+      const scale = Math.min(1, edge / Math.max(img.naturalWidth, img.naturalHeight));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+      canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+      const ctx = canvas.getContext('2d');
+      // JPEG has no transparency. Without a fill, a transparent PNG comes out on black.
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      return new Promise((resolve, reject) => {
+        canvas.toBlob(b => (b ? resolve(b) : reject(new Error('encode'))), 'image/jpeg', quality);
+      });
+    }
+
+    function renderPhotos() {
+      const chosen = photos.map((p, i) => {
+        const li = document.createElement('li');
+        li.className = 'photo';
+        const img = document.createElement('img');
+        img.src = p.url;
+        img.alt = `Photo ${i + 1}`;
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'photo-remove';
+        remove.setAttribute('aria-label', `Remove photo ${i + 1}`);
+        remove.textContent = '×';
+        remove.addEventListener('click', () => {
+          URL.revokeObjectURL(p.url);
+          photos.splice(photos.indexOf(p), 1);
+          photoError.textContent = '';
+          renderPhotos();
+          // The tile that had focus is gone; the add button is back, so focus goes there.
+          photoInput.focus();
+        });
+        li.append(img, remove);
+        return li;
+      });
+      const loading = Array.from({ length: preparing }, () => {
+        const li = document.createElement('li');
+        li.className = 'photo is-loading';
+        li.innerHTML = '<span class="vh">Preparing photo…</span>';
+        return li;
+      });
+      photoList.replaceChildren(...chosen, ...loading);
+      photoAdd.hidden = photos.length + preparing >= MAX_PHOTOS;
+    }
+
+    photoInput.addEventListener('change', async () => {
+      const picked = Array.from(photoInput.files);
+      // Cleared so choosing the same file again, after removing it, still fires change.
+      photoInput.value = '';
+
+      const room = MAX_PHOTOS - photos.length - preparing;
+      const problems = [];
+      const queue = [];
+      let leftOut = 0;
+      for (const file of picked) {
+        if (!isAccepted(file)) problems.push(`“${file.name}” isn’t a JPEG, PNG or WebP.`);
+        else if (file.size > MAX_ORIGINAL_BYTES) problems.push(`“${file.name}” is over 25 MB.`);
+        else if (queue.length < room) queue.push(file);
+        else leftOut++;
+      }
+      if (leftOut) {
+        problems.push(`Three is the limit, so ${leftOut === 1 ? 'one photo was' : `${leftOut} photos were`} left out.`);
+      }
+      photoError.textContent = problems.join(' ');
+
+      preparing += queue.length;
+      renderPhotos();
+      for (const file of queue) {
+        try {
+          const blob = await shrink(file);
+          photos.push({ blob, url: URL.createObjectURL(blob) });
+        } catch (err) {
+          problems.push(err.message === 'too-big'
+            ? `“${file.name}” couldn’t be made small enough to send. Try a different photo.`
+            : `“${file.name}” couldn’t be opened. Try a different photo.`);
+        }
+        preparing--;
+        renderPhotos();
+      }
+      photoError.textContent = problems.join(' ');
+
+      // Filling the last slot hides the add button. If focus was on it, it would fall
+      // back to the top of the page, so move it to the newest photo's remove button.
+      if (photoAdd.hidden && (document.activeElement === document.body || document.activeElement === photoInput)) {
+        const removes = photoList.querySelectorAll('.photo-remove');
+        if (removes.length) removes[removes.length - 1].focus();
+      }
+    });
 
     // Optional, so an empty box is fine. But a typo'd address is worse than none at all:
     // it becomes the email's reply_to, so the review arrives looking replyable and
@@ -382,6 +554,12 @@ footer{background:var(--black);padding:3rem 5rem;display:flex;justify-content:sp
       emailField.classList.remove('is-invalid');
       emailError.textContent = '';
 
+      if (preparing) {
+        statusEl.className = 'status is-pending';
+        statusEl.textContent = 'Still getting your photos ready. Try again in a second.';
+        return;
+      }
+
       // The widget usually resolves before anyone finishes typing, but it can still be
       // working on a slow connection. Posting without a token is a guaranteed 403.
       const token = form.querySelector('[name="cf-turnstile-response"]');
@@ -393,15 +571,16 @@ footer{background:var(--black);padding:3rem 5rem;display:flex;justify-content:sp
 
       submit.disabled = true;
       statusEl.className = 'status is-pending';
-      statusEl.textContent = 'Sending…';
+      statusEl.textContent = photos.length ? 'Sending… photos can take a few seconds.' : 'Sending…';
+
+      // Multipart, so the photos travel as files. No Content-Type header: the browser
+      // has to write its own, because it carries the boundary between the parts.
+      const body = new FormData(form);
+      photos.forEach((p, i) => body.append('photos', p.blob, `photo-${i + 1}.jpg`));
 
       let res;
       try {
-        res = await fetch(form.action, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(Object.fromEntries(new FormData(form)))
-        });
+        res = await fetch(form.action, { method: 'POST', body });
       } catch (err) {
         fail(GENERIC_ERROR);
         return;
@@ -415,7 +594,11 @@ footer{background:var(--black);padding:3rem 5rem;display:flex;justify-content:sp
       // 403 is the one a person can act on (reload and retry), so it gets the function's
       // own wording; everything else falls back to "email me instead".
       let message = GENERIC_ERROR;
-      if (res.status === 403 || res.status === 429) {
+      // Vercel's own answer when the whole request is over its 4.5 MB limit. The size
+      // checks above should make it unreachable, but removing a photo is the fix if not.
+      if (res.status === 413) {
+        message = 'Those photos are too large to send together. Remove one and try again.';
+      } else if (res.status === 403 || res.status === 429) {
         try {
           const body = await res.json();
           if (body && body.error) message = body.error;
