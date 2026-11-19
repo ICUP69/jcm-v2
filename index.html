@@ -114,15 +114,62 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content
 .film-card-label{margin-top:0.8rem;}
 .film-card-title{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:400;color:var(--black);margin-bottom:0.2rem;}
 .film-card-meta{font-size:0.54rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--soft);}
-.testimonials{background:var(--bg);padding:10rem 5rem;text-align:center;}
-.test-hd{max-width:520px;margin:0 auto 5rem;}
-.tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1px;max-width:1300px;margin:0 auto;background:var(--border);}
-.tc{background:var(--white);padding:3.5rem 2.8rem;text-align:left;transition:background 0.3s;}
-.tc:hover{background:var(--bg2);}
-.t-stars{color:var(--black);font-size:0.6rem;letter-spacing:0.2em;margin-bottom:1.8rem;}
-.t-q{font-family:'Playfair Display',serif;font-style:normal;font-size:1.05rem;line-height:1.8;color:var(--black);margin-bottom:2rem;}
-.t-name{font-size:0.56rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--mid);}
-.t-svc{font-size:0.5rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--soft);margin-top:0.35rem;}
+/* ---- Reviews: photo cards in a swipeable row. Three show at a time on desktop, two on
+   tablets, and one with the next peeking in on phones. The arrows and the progress line
+   only appear once there are more reviews than fit. ---- */
+.testimonials{background:var(--bg);padding:10rem 5rem;}
+.test-hd{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;max-width:1300px;margin:0 auto 3.5rem;}
+.test-hd .s-title{margin-bottom:0;}
+.rail-nav{display:flex;gap:0.6rem;flex-shrink:0;}
+.rail-nav[hidden]{display:none;}
+.rail-btn{width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid rgba(0,0,0,0.18);color:var(--black);cursor:pointer;transition:background 0.3s,border-color 0.3s,color 0.3s,opacity 0.3s;}
+.rail-btn:hover:not(:disabled){background:var(--black);border-color:var(--black);color:var(--white);}
+.rail-btn:disabled{opacity:0.3;cursor:default;}
+.rail-btn:focus-visible{outline:2px solid var(--black);outline-offset:3px;}
+.reviews{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 3rem) / 3);gap:1.5rem;max-width:1300px;margin:0 auto;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;}
+.reviews::-webkit-scrollbar{display:none;}
+.reviews:focus-visible{outline:2px solid var(--black);outline-offset:6px;}
+.review{scroll-snap-align:start;background:var(--white);border:1px solid var(--border);display:flex;flex-direction:column;min-width:0;}
+.review > :not(.review-photos){padding-left:2.2rem;padding-right:2.2rem;}
+/* Photos are stacked in one frame. With more than one, the script adds thumbnails to
+   switch between them. Without the script, the first photo shows. */
+.review-photos{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--bg2);}
+.review-photos > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity 0.5s;}
+.review-photos > img:first-of-type{opacity:1;}
+.review-photos.has-thumbs > img{opacity:0;}
+.review-photos.has-thumbs > img.on{opacity:1;}
+.review-photos::before{content:'Their favorite shot';position:absolute;top:12px;left:12px;z-index:2;font-size:0.5rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--white);background:rgba(20,20,20,0.55);padding:0.5rem 0.75rem;}
+.review-photos:has(> img:nth-of-type(2))::before{content:'Their favorite shots';}
+.review-thumbs{position:absolute;left:12px;bottom:12px;z-index:2;display:flex;gap:6px;}
+.review-thumb{width:40px;aspect-ratio:3/4;padding:0;border:1px solid rgba(255,255,255,0.55);background:var(--bg2);cursor:pointer;opacity:0.7;overflow:hidden;transition:opacity 0.3s,border-color 0.3s;}
+.review-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.review-thumb:hover,.review-thumb[aria-pressed="true"]{opacity:1;border-color:var(--white);}
+.review-thumb[aria-pressed="true"]{box-shadow:0 0 0 1px var(--white);}
+.review-thumb:focus-visible{outline:2px solid var(--white);outline-offset:2px;}
+.review-stars{padding-top:2.2rem;margin-bottom:1.2rem;font-size:0.7rem;letter-spacing:0.25em;color:var(--black);}
+.review-quote{font-family:'Playfair Display',serif;font-size:1rem;line-height:1.8;color:var(--black);margin-bottom:1.8rem;}
+.review-name{margin-top:auto;font-size:0.56rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--mid);}
+.review-svc{font-size:0.5rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--soft);margin-top:0.35rem;padding-bottom:2.4rem;}
+/* No photos: a large quote mark and bigger type, centred in the height a photo card sets. */
+.review:not(:has(.review-photos)){justify-content:center;padding-bottom:1rem;}
+.review:not(:has(.review-photos)) .review-name{margin-top:0;}
+.review:not(:has(.review-photos))::before{content:'\201C';display:block;font-family:'Playfair Display',serif;font-size:7rem;line-height:1;color:rgba(0,0,0,0.07);padding:2.6rem 2.2rem 0;margin-bottom:-2.6rem;}
+.review:not(:has(.review-photos)) .review-quote{font-size:1.3rem;line-height:1.7;}
+.rail-progress{max-width:1300px;margin:2.5rem auto 0;height:1px;background:rgba(0,0,0,0.1);overflow:hidden;}
+.rail-progress[hidden]{display:none;}
+.rail-progress span{display:block;height:100%;width:0;background:var(--black);}
+@media(prefers-reduced-motion:reduce){.review-photos > img{transition:none;}}
+@media(max-width:960px){
+  .reviews{grid-auto-columns:calc((100% - 1.5rem) / 2);}
+}
+@media(max-width:600px){
+  .test-hd{margin-bottom:2.5rem;}
+  .rail-nav{display:none;}
+  /* Full-bleed so the next card peeks in from the screen edge, a cue to swipe. */
+  .reviews{grid-auto-columns:84%;gap:1rem;margin:0 -1.5rem;padding:0 1.5rem;scroll-padding:0 1.5rem;}
+  .review > :not(.review-photos){padding-left:1.6rem;padding-right:1.6rem;}
+  .review:not(:has(.review-photos))::before{padding-left:1.6rem;padding-right:1.6rem;}
+}
 .contact{padding:10rem 5rem;background:var(--white);}
 .contact-in{display:grid;grid-template-columns:1fr 1.1fr;gap:8rem;max-width:1300px;margin:0 auto;align-items:start;}
 .contact p{font-size:0.82rem;color:var(--mid);line-height:2;margin-bottom:2.5rem;}
@@ -421,29 +468,73 @@ footer{background:var(--black);padding:3.5rem 5rem;display:flex;justify-content:
 
 <section class="testimonials" id="testimonials">
   <div class="test-hd">
-    <span class="eyebrow">Kind Words</span>
-    <h2 class="s-title">What clients say</h2>
-  </div>
-  <div class="tgrid">
-    <div class="tc">
-      <div class="t-stars">★ ★ ★ ★ ★</div>
-      <p class="t-q">"Juan captured our wedding beyond anything we imagined. Every photo felt like a scene from a film. We cry happy tears every time we look at our album."</p>
-      <p class="t-name">Sofia & Marcus R.</p>
-      <p class="t-svc">Wedding · Lake Tahoe</p>
+    <div>
+      <span class="eyebrow">Kind Words</span>
+      <h2 class="s-title">What clients say</h2>
     </div>
-    <div class="tc">
-      <div class="t-stars">★ ★ ★ ★ ★</div>
-      <p class="t-q">"The portrait session was effortless. Juan made us feel completely comfortable and the photos came out better than we ever expected."</p>
-      <p class="t-name">Ashley M.</p>
-      <p class="t-svc">Portraits · Reno</p>
-    </div>
-    <div class="tc">
-      <div class="t-stars">★ ★ ★ ★ ★</div>
-      <p class="t-q">"Juan has top tier work! Professional, creative, and dialed in with everything from directing to his setup. If you need photos/video work, this is your guy. 5 stars all day"</p>
-      <p class="t-name">Jasson Mendoza</p>
-      <p class="t-svc">Real Estate · Tahoe</p>
+    <div class="rail-nav" hidden>
+      <button class="rail-btn" type="button" data-dir="-1" aria-label="Previous reviews"><svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true"><path d="M15 5H1M5 1L1 5l4 4" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      <button class="rail-btn" type="button" data-dir="1" aria-label="Next reviews"><svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true"><path d="M1 5h14M11 1l4 4-4 4" stroke="currentColor" stroke-width="1.2"/></svg></button>
     </div>
   </div>
+  <div class="reviews" tabindex="0" role="region" aria-label="Client reviews">
+    <!-- HOW TO ADD A REVIEW: newest goes first.
+         1. Only use reviews whose email says "Publish: YES". That consent covers their photos too.
+         2. Save the photos in /assets/ as name-1.jpg, name-2.jpg, name-3.jpg. The client's
+            attachment tells you which shot they meant, but your own edited original will look
+            better. Shrink each new photo to 900px wide first, or every visitor downloads the
+            full-size file. On a Mac:  sips --resampleWidth 900 -s formatOptions normal assets/name-*.jpg
+            Only run that on the new files. The ones already here are done.
+         3. Copy one <article> below and change the stars, quote, name and service line. Use the
+            email's "Credit" line as the name. Stars are typed out: ★★★★★, or ★★★★☆ for four.
+         4. Up to 3 photos per review. Tall (portrait) shots fit best. For a review with no
+            photos, delete its whole "review-photos" <div>. Give each photo a short alt
+            description of what's in it, for people using screen readers. -->
+
+    <article class="review">
+      <div class="review-photos">
+        <img src="/assets/yvette-1.jpg" alt="A bride and groom walk hand in hand along a dock on Lake Tahoe." loading="lazy"/>
+        <img src="/assets/yvette-2.jpg" alt="The bride and groom stroll down the dock with boats and the lake behind them." loading="lazy"/>
+        <img src="/assets/yvette-3.jpg" alt="The couple poses on granite boulders above Lake Tahoe." loading="lazy"/>
+      </div>
+      <div class="review-stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+      <p class="review-quote">“We hired Juan for our summer 2026 wedding and it was hands down the best and easiest decision we’ve made. From our engagement photos, to the big day, Juan’s work captured it all beautifully. Juan was so easy to work with, he made us feel comfortable and laugh during photoshoots. Plus, he’s a GREAT time at weddings! Seeing him dance while working was honestly my favorite! Thank you Juan for everything, we’re truly grateful for you!”</p>
+      <p class="review-name">Yvette M.</p>
+      <p class="review-svc">Wedding · South Lake Tahoe</p>
+    </article>
+
+    <article class="review">
+      <div class="review-photos">
+        <img src="/assets/cheyenne-1.jpg" alt="A couple stands close on a leaf-covered path under golden fall trees." loading="lazy"/>
+        <img src="/assets/cheyenne-2.jpg" alt="The couple walks across the grass, each carrying a toddler." loading="lazy"/>
+        <img src="/assets/cheyenne-3.jpg" alt="A toddler tosses an armful of fall leaves into the air." loading="lazy"/>
+      </div>
+      <div class="review-stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+      <p class="review-quote">“Had an excellent experience having family photos taken by Juan. He was professional, and worked great with my toddlers. I would recommend him, and would love having pictures taken by him again.”</p>
+      <p class="review-name">Cheyenne</p>
+      <p class="review-svc">Portraits · US</p>
+    </article>
+
+    <article class="review">
+      <div class="review-stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+      <p class="review-quote">“As a wedding planner it is always so amazing to work with Juan! He is professional, collaborative, and kind. He always makes sure to check in with me before the next timeline event, that way we work together to make the bride and groom happy and the evening flow! His photos are just beautiful and Juan will always be a photographer I recommend. If you are shy in front of a camera, Juan knows how to easily get you to laugh and have the biggest smile.”</p>
+      <p class="review-name">Saddle &amp; Sage</p>
+      <p class="review-svc">Wedding</p>
+    </article>
+
+    <article class="review">
+      <div class="review-photos">
+        <img src="/assets/olive-1.jpg" alt="A big family in matching plaid flannels poses together on a path under fall trees." loading="lazy"/>
+        <img src="/assets/olive-2.jpg" alt="Two couples in plaid flannels peek out from either side of a large tree trunk." loading="lazy"/>
+        <img src="/assets/olive-3.jpg" alt="Three little kids sit together in a bed of fallen leaves." loading="lazy"/>
+      </div>
+      <div class="review-stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+      <p class="review-quote">“I absolutely love how comfortable Juan makes you feel during the photoshoot! Genuinely makes it feel like we’ve been close friends forever. The photos are beautiful and I would definitely recommend!!”</p>
+      <p class="review-name">Olive Mendoza</p>
+      <p class="review-svc">Portraits · Caughlin</p>
+    </article>
+  </div>
+  <div class="rail-progress" aria-hidden="true" hidden><span></span></div>
 </section>
 
 <section class="contact" id="contact">
@@ -566,5 +657,83 @@ btns.forEach(btn => {
       });
     });
   </script>
+<script>
+  // Reviews: thumbnails for reviews with more than one photo, plus the arrows and
+  // progress line for the row.
+  (function () {
+    const rail = document.querySelector('#testimonials .reviews');
+    if (!rail) return;
+
+    rail.querySelectorAll('.review-photos').forEach(function (frame) {
+      const imgs = Array.from(frame.querySelectorAll(':scope > img'));
+      if (imgs.length < 2) return;
+      frame.classList.add('has-thumbs');
+      imgs[0].classList.add('on');
+      const strip = document.createElement('div');
+      strip.className = 'review-thumbs';
+      imgs.forEach(function (img, i) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'review-thumb';
+        btn.setAttribute('aria-label', 'Show photo ' + (i + 1) + ' of ' + imgs.length);
+        btn.setAttribute('aria-pressed', String(i === 0));
+        const thumb = document.createElement('img');
+        thumb.src = img.src;  // same file as the big one, so the browser only fetches it once
+        thumb.alt = '';
+        thumb.loading = 'lazy';
+        btn.append(thumb);
+        btn.addEventListener('click', function () {
+          imgs.forEach(function (im, j) { im.classList.toggle('on', j === i); });
+          strip.querySelectorAll('.review-thumb').forEach(function (b, j) {
+            b.setAttribute('aria-pressed', String(j === i));
+          });
+        });
+        strip.append(btn);
+      });
+      frame.append(strip);
+    });
+
+    const nav = document.querySelector('#testimonials .rail-nav');
+    const prev = nav.querySelector('[data-dir="-1"]');
+    const next = nav.querySelector('[data-dir="1"]');
+    const progress = document.querySelector('#testimonials .rail-progress');
+    const bar = progress.querySelector('span');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function step() {
+      const card = rail.querySelector('.review');
+      const gap = parseFloat(getComputedStyle(rail).columnGap) || 0;
+      return card ? card.getBoundingClientRect().width + gap : rail.clientWidth;
+    }
+
+    function update() {
+      const max = rail.scrollWidth - rail.clientWidth;
+      const scrolls = max > 2;
+      nav.hidden = !scrolls;
+      progress.hidden = !scrolls;
+      if (!scrolls) return;
+      prev.disabled = rail.scrollLeft <= 2;
+      next.disabled = rail.scrollLeft >= max - 2;
+      const visible = rail.clientWidth / rail.scrollWidth;
+      bar.style.width = (visible * 100) + '%';
+      bar.style.transform = 'translateX(' + ((rail.scrollLeft / max) * (1 / visible - 1) * 100) + '%)';
+    }
+
+    [prev, next].forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        rail.scrollBy({ left: Number(btn.dataset.dir) * step(), behavior: reduce.matches ? 'auto' : 'smooth' });
+      });
+    });
+
+    let queued = false;
+    rail.addEventListener('scroll', function () {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () { queued = false; update(); });
+    }, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  })();
+</script>
 </body>
 </html>
