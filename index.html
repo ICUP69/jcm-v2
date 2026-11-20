@@ -155,10 +155,24 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content
 .review:not(:has(.review-photos)) .review-name{margin-top:0;}
 .review:not(:has(.review-photos))::before{content:'\201C';display:block;font-family:'Playfair Display',serif;font-size:7rem;line-height:1;color:rgba(0,0,0,0.07);padding:2.6rem 2.2rem 0;margin-bottom:-2.6rem;}
 .review:not(:has(.review-photos)) .review-quote{font-size:1.3rem;line-height:1.7;}
+/* Long reviews. The script marks a long quote .is-long and sets --lines so its card is no
+   taller than the others, and the "Read more" button opens it in place. While one is open,
+   the other cards keep the row's old height (--row-h) instead of stretching to match it.
+   Without the script, every quote shows in full. */
+.review.is-long:not(.is-open) .review-quote{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--lines);line-clamp:var(--lines);overflow:hidden;}
+.reviews.has-open{align-items:start;}
+.reviews.has-open .review{min-height:var(--row-h);}
+.review-more{display:none;}
+.review.is-long .review-more{align-self:flex-start;display:inline-flex;align-items:center;gap:0.6rem;margin:-0.6rem 0 1.8rem;padding-top:0;padding-bottom:0;background:none;border:0;font-family:'Jost',sans-serif;font-size:0.56rem;font-weight:400;letter-spacing:0.3em;text-transform:uppercase;color:var(--black);cursor:pointer;}
+.review-more span{padding-bottom:3px;border-bottom:1px solid rgba(0,0,0,0.25);transition:border-color 0.3s;}
+.review-more:hover span{border-color:var(--black);}
+.review-more svg{transition:transform 0.3s;}
+.review.is-open .review-more svg{transform:rotate(180deg);}
+.review-more:focus-visible{outline:2px solid var(--black);outline-offset:4px;}
 .rail-progress{max-width:1300px;margin:2.5rem auto 0;height:1px;background:rgba(0,0,0,0.1);overflow:hidden;}
 .rail-progress[hidden]{display:none;}
 .rail-progress span{display:block;height:100%;width:0;background:var(--black);}
-@media(prefers-reduced-motion:reduce){.review-photos > img{transition:none;}}
+@media(prefers-reduced-motion:reduce){.review-photos > img,.review-more svg{transition:none;}}
 @media(max-width:960px){
   .reviews{grid-auto-columns:calc((100% - 1.5rem) / 2);}
 }
@@ -478,7 +492,7 @@ footer{background:var(--black);padding:3.5rem 5rem;display:flex;justify-content:
     </div>
   </div>
   <div class="reviews" tabindex="0" role="region" aria-label="Client reviews">
-    <!-- HOW TO ADD A REVIEW: newest goes first.
+    <!-- HOW TO ADD A REVIEW: new ones go at the end of the row.
          1. Only use reviews whose email says "Publish: YES". That consent covers their photos too.
          2. Save the photos in /assets/ as name-1.jpg, name-2.jpg, name-3.jpg. The client's
             attachment tells you which shot they meant, but your own edited original will look
@@ -486,10 +500,12 @@ footer{background:var(--black);padding:3.5rem 5rem;display:flex;justify-content:
             full-size file. On a Mac:  sips --resampleWidth 900 -s formatOptions normal assets/name-*.jpg
             Only run that on the new files. The ones already here are done.
          3. Copy one <article> below and change the stars, quote, name and service line. Use the
-            email's "Credit" line as the name. Stars are typed out: ★★★★★, or ★★★★☆ for four.
+            email's "Credit" line as the name, with a period after an initial ("Olive M.").
+            Stars are typed out: ★★★★★, or ★★★★☆ for four.
          4. Up to 3 photos per review. Tall (portrait) shots fit best. For a review with no
             photos, delete its whole "review-photos" <div>. Give each photo a short alt
-            description of what's in it, for people using screen readers. -->
+            description of what's in it, for people using screen readers.
+         5. Long quotes get a "Read more" button by themselves, so paste the whole review. -->
 
     <article class="review">
       <div class="review-photos">
@@ -532,6 +548,29 @@ footer{background:var(--black);padding:3.5rem 5rem;display:flex;justify-content:
       <p class="review-quote">“I absolutely love how comfortable Juan makes you feel during the photoshoot! Genuinely makes it feel like we’ve been close friends forever. The photos are beautiful and I would definitely recommend!!”</p>
       <p class="review-name">Olive M.</p>
       <p class="review-svc">Portraits · Caughlin</p>
+    </article>
+
+    <article class="review">
+      <div class="review-photos">
+        <img src="/assets/arad-1.jpg" alt="A senior portrait among pale desert rocks: white sweater, black jeans and an acoustic guitar." loading="lazy"/>
+        <img src="/assets/arad-2.jpg" alt="Behind the scenes: someone in a patterned jacket raises both arms to direct the shot as the senior poses with the guitar below white rock spires." loading="lazy"/>
+      </div>
+      <div class="review-stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+      <p class="review-quote">“I had my seniors photos taken with Juan, what a wonderful experience and outcome! Very accommodating to my likings, outgoing so it wasn’t an awkward shoot, and made posing up easy!”</p>
+      <p class="review-name">Arad D.</p>
+      <p class="review-svc">Portraits · Moon Rocks</p>
+    </article>
+
+    <article class="review">
+      <div class="review-photos">
+        <img src="/assets/tatum-1.jpg" alt="A portrait in a sunflower field at golden hour, in a polka-dot sundress with one bloom in hand." loading="lazy"/>
+        <img src="/assets/tatum-2.jpg" alt="A graduation portrait in pink scrubs, holding a stethoscope beside a creek and a small wooden footbridge." loading="lazy"/>
+        <img src="/assets/tatum-3.jpg" alt="Still in pink scrubs, popping a bottle of champagne on a grassy hillside." loading="lazy"/>
+      </div>
+      <div class="review-stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+      <p class="review-quote">“Where do I even begin?! I genuinely cannot recommend JCRUZZ MEDIA enough! I’ve had the pleasure of seeing his talent shine through so many different photoshoots and milestones over the years, and he somehow manages to exceed expectations every single time! From graduation portraits for people close to me, to one of my best friend’s graduation sessions, to a gorgeous sunflower photoshoot, and most recently, my very own graduation pictures, he’s been behind the camera for so many special memories. At this point, he’s practically the unofficial photographer of all my life’s chapters! What truly sets him apart is his creativity, attention to detail, and incredible ability to capture not just a beautiful image, but the personality and emotion behind it. His work feels intentional, authentic, and effortlessly stunning. You can genuinely see the passion he puts into his craft. And I think that speaks volumes! It’s one thing to have a fantastic experience once, but to witness that same talent and dedication across completely different sessions, settings, and people is something special. If you’re looking for a photographer who can turn life’s little moments and biggest milestones into memories you’ll treasure forever, look no further. His talent deserves to be seen, celebrated, and shared. I will forever be cheering him on and recommending his work to anyone who will listen!”</p>
+      <p class="review-name">Tatum T.</p>
+      <p class="review-svc">Portraits · US</p>
     </article>
   </div>
   <div class="rail-progress" aria-hidden="true" hidden><span></span></div>
@@ -693,6 +732,87 @@ btns.forEach(btn => {
       frame.append(strip);
     });
 
+    // Long reviews: a quote over LONG characters is cut to the height of the other cards, with
+    // a "Read more" button that opens it in place. The longest short one so far is about 450.
+    const LONG = 600;
+    const MIN_LINES = 6;
+    const cards = Array.from(rail.querySelectorAll('.review'));
+    const longCards = cards.filter(function (card) {
+      const quote = card.querySelector('.review-quote');
+      return quote && quote.textContent.length > LONG;
+    });
+    const menuBar = document.querySelector('nav');
+
+    function isOpen(card) { return card.classList.contains('is-open'); }
+
+    function setOpen(card, open) {
+      const more = card.querySelector('.review-more');
+      card.classList.toggle('is-open', open);
+      more.setAttribute('aria-expanded', String(open));
+      more.firstChild.textContent = open ? 'Show less' : 'Read more';
+      rail.classList.toggle('has-open', cards.some(isOpen));
+    }
+
+    longCards.forEach(function (card, n) {
+      const quote = card.querySelector('.review-quote');
+      quote.id = 'review-quote-' + (n + 1);
+      const more = document.createElement('button');
+      more.type = 'button';
+      more.className = 'review-more';
+      more.setAttribute('aria-controls', quote.id);
+      more.setAttribute('aria-expanded', 'false');
+      more.innerHTML = '<span>Read more</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.2"/></svg>';
+      quote.after(more);
+      more.addEventListener('click', function () {
+        const opening = !isOpen(card);
+        const before = more.getBoundingClientRect().top;
+        // Every card is the row's height while none is open, so this card's height is it.
+        if (opening && !rail.classList.contains('has-open')) {
+          rail.style.setProperty('--row-h', card.offsetHeight + 'px');
+        }
+        setOpen(card, opening);
+        // Closing a long review on a phone can leave its button far above the screen.
+        // Jump back by however far it moved, so it stays where the reader tapped. The page
+        // scrolls smoothly by default, which would glide away, so that's off for this jump.
+        const after = more.getBoundingClientRect().top;
+        if (!opening && after < menuBar.getBoundingClientRect().bottom) {
+          document.documentElement.style.scrollBehavior = 'auto';
+          window.scrollBy(0, after - before);
+          document.documentElement.style.scrollBehavior = '';
+        }
+      });
+    });
+
+    // How many lines fit depends on the card width and the font, so this runs again once the
+    // web font loads and whenever the width changes. It lets every card take its natural
+    // height, finds the tallest of the short ones, and cuts each long quote to fit beside it.
+    function fitQuotes() {
+      if (!longCards.length) return;
+      const open = longCards.filter(isOpen);
+      rail.classList.remove('has-open');
+      longCards.forEach(function (card) {
+        card.classList.remove('is-open');
+        card.classList.add('is-long');  // shows the button; with no --lines the quote stays whole
+        card.style.removeProperty('--lines');
+      });
+      rail.style.alignItems = 'start';
+      const rowH = Math.max(0, ...cards.filter(function (card) {
+        return !longCards.includes(card);
+      }).map(function (card) { return card.offsetHeight; }));
+      longCards.forEach(function (card) {
+        const quote = card.querySelector('.review-quote');
+        const lineH = parseFloat(getComputedStyle(quote).lineHeight);
+        const room = rowH - (card.offsetHeight - quote.offsetHeight);
+        card.style.setProperty('--lines', String(Math.max(MIN_LINES, Math.floor(room / lineH))));
+        // On a wide screen a long quote can fit anyway, and then it needs no button.
+        card.classList.toggle('is-long', quote.scrollHeight > quote.clientHeight + 1);
+      });
+      rail.style.alignItems = '';
+      if (!open.length) return;
+      rail.style.setProperty('--row-h', cards[0].offsetHeight + 'px');
+      open.forEach(function (card) { setOpen(card, card.classList.contains('is-long')); });
+    }
+
     const nav = document.querySelector('#testimonials .rail-nav');
     const prev = nav.querySelector('[data-dir="-1"]');
     const next = nav.querySelector('[data-dir="1"]');
@@ -731,7 +851,14 @@ btns.forEach(btn => {
       queued = true;
       requestAnimationFrame(function () { queued = false; update(); });
     }, { passive: true });
-    window.addEventListener('resize', update);
+    let width = rail.clientWidth;
+    window.addEventListener('resize', function () {
+      // Phones fire resize when the address bar slides away, so only re-measure on a width change.
+      if (rail.clientWidth !== width) { width = rail.clientWidth; fitQuotes(); }
+      update();
+    });
+    fitQuotes();
+    if (document.fonts) document.fonts.ready.then(fitQuotes);
     update();
   })();
 </script>
