@@ -136,6 +136,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content
 .review-photos{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--bg2);}
 .review-photos > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity 0.5s;}
 .review-photos > img:first-of-type{opacity:1;}
+.review-photos > img.wide{object-fit:contain;background:var(--bg2);}  /* landscape shot: whole photo, gray bands above and below */
 .review-photos.has-thumbs > img{opacity:0;}
 .review-photos.has-thumbs > img.on{opacity:1;}
 .review-photos::before{content:'Their favorite shot';position:absolute;top:12px;left:12px;z-index:2;font-size:0.5rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--white);background:rgba(20,20,20,0.55);padding:0.5rem 0.75rem;}
@@ -502,7 +503,9 @@ footer{background:var(--black);padding:3.5rem 5rem;display:flex;justify-content:
          3. Copy one <article> below and change the stars, quote, name and service line. Use the
             email's "Credit" line as the name, with a period after an initial ("Olive M.").
             Stars are typed out: ★★★★★, or ★★★★☆ for four.
-         4. Up to 3 photos per review. Tall (portrait) shots fit best. For a review with no
+         4. Up to 3 photos per review. Tall (portrait) shots fit best. A wide (landscape) shot
+            would get its sides cut off, so add class="wide" to its <img> and it shows whole,
+            with gray bands above and below. Put it after the tall ones. For a review with no
             photos, delete its whole "review-photos" <div>. Give each photo a short alt
             description of what's in it, for people using screen readers.
          5. Long quotes get a "Read more" button by themselves, so paste the whole review. -->
@@ -556,7 +559,7 @@ footer{background:var(--black);padding:3.5rem 5rem;display:flex;justify-content:
         <img src="/assets/arad-2.jpg" alt="Behind the scenes: someone in a patterned jacket raises both arms to direct the shot as the senior poses with the guitar below white rock spires." loading="lazy"/>
       </div>
       <div class="review-stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
-      <p class="review-quote">“I had my seniors photos taken with Juan, what a wonderful experience and outcome! Very accommodating to my likings, outgoing so it wasn’t an awkward shoot, and made posing up easy!”</p>
+      <p class="review-quote">“I had my senior photos taken with Juan, what a wonderful experience and outcome! Very accommodating to my likings, outgoing so it wasn’t an awkward shoot, and made posing up easy!”</p>
       <p class="review-name">Arad D.</p>
       <p class="review-svc">Portraits · Moon Rocks</p>
     </article>
@@ -571,6 +574,30 @@ footer{background:var(--black);padding:3.5rem 5rem;display:flex;justify-content:
       <p class="review-quote">“Where do I even begin?! I genuinely cannot recommend JCRUZZ MEDIA enough! I’ve had the pleasure of seeing his talent shine through so many different photoshoots and milestones over the years, and he somehow manages to exceed expectations every single time! From graduation portraits for people close to me, to one of my best friend’s graduation sessions, to a gorgeous sunflower photoshoot, and most recently, my very own graduation pictures, he’s been behind the camera for so many special memories. At this point, he’s practically the unofficial photographer of all my life’s chapters! What truly sets him apart is his creativity, attention to detail, and incredible ability to capture not just a beautiful image, but the personality and emotion behind it. His work feels intentional, authentic, and effortlessly stunning. You can genuinely see the passion he puts into his craft. And I think that speaks volumes! It’s one thing to have a fantastic experience once, but to witness that same talent and dedication across completely different sessions, settings, and people is something special. If you’re looking for a photographer who can turn life’s little moments and biggest milestones into memories you’ll treasure forever, look no further. His talent deserves to be seen, celebrated, and shared. I will forever be cheering him on and recommending his work to anyone who will listen!”</p>
       <p class="review-name">Tatum T.</p>
       <p class="review-svc">Portraits · US</p>
+    </article>
+
+    <article class="review">
+      <div class="review-photos">
+        <img src="/assets/clarissa-1.jpg" alt="A bride and groom embrace on a wooden boardwalk through a meadow, below Yosemite's granite cliffs." loading="lazy"/>
+        <img src="/assets/clarissa-2.jpg" alt="The groom kisses the smiling bride's cheek on the boardwalk, her long train spread across the planks." loading="lazy"/>
+        <img src="/assets/clarissa-3.jpg" alt="The couple shares a kiss in a sunlit meadow beneath towering granite cliffs." loading="lazy"/>
+      </div>
+      <div class="review-stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+      <p class="review-quote">“Juan shot our wedding photos in Yosemite and he captured our vision perfectly!! He is also genuinely a great person, he made us feel so comfortable during the shoot and knew exactly how to direct us.”</p>
+      <p class="review-name">Clarissa</p>
+      <p class="review-svc">Wedding · Yosemite</p>
+    </article>
+
+    <article class="review">
+      <div class="review-photos">
+        <img src="/assets/jenna-1.jpg" alt="Framed by the bride's veil, the groom leans in close as she laughs." loading="lazy"/>
+        <img src="/assets/jenna-2.jpg" alt="The bride laughs in the groom's arms in a shady garden, her long veil embroidered with flowers." loading="lazy"/>
+        <img class="wide" src="/assets/jenna-3.jpg" alt="The whole wedding party cheers in front of an ivy-covered wall: bridesmaids in pastel dresses, groomsmen in cream suits and a little boy in front." loading="lazy"/>
+      </div>
+      <div class="review-stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+      <p class="review-quote">“My husband and I truly could not have asked for a better wedding photographer! From start to finish, Juan and his team were absolutely incredible. They captured every little detail of our special day so beautifully, including moments we didn’t even realize were happening! Juan was extremely organized, professional, and made the entire process feel effortless. He knew exactly how to pose us and had the BEST ideas for photos, making sure everyone looked and felt their best. He kept everything running smoothly while still making the experience so fun and natural. On top of his amazing talent, his communication was wonderful, and he delivered everything in such a timely manner! Looking back at our wedding photos feels like reliving the best day of our lives all over again. We are beyond grateful to have these memories captured so perfectly and will cherish them forever. We cannot recommend him enough! If you’re looking for a photographer who truly goes above and beyond, he is your guy! 🤍”</p>
+      <p class="review-name">Jenna S.</p>
+      <p class="review-svc">Wedding · Reno – Lavender Ridge</p>
     </article>
   </div>
   <div class="rail-progress" aria-hidden="true" hidden><span></span></div>
